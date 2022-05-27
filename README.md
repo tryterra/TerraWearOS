@@ -29,18 +29,13 @@ Then you must include the library and the coroutines library in your app level g
 
 ```gradle
 implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.5.2'
+implementation 'androidx.health:health-services-client:1.0.0-alpha03'
+implementation 'com.google.guava:guava:30.1.1-android'
+implementation 'androidx.wear:wear:1.2.0'
+implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.5.2'
+implementation 'com.google.code.gson:gson:2.8.7'
 implementation files('libs/TerraWearOS-alpha.aar')
 
-```
-
-For example:
-```gradle
-dependencies {
-    implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.appcompat:appcompat:1.4.0'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.5.2'
-    implementation files('libs/TerraWearOS-alpha.aar')
-}
 ```
 
 You may now import classes from the library as: `import co.tryterra.terrawearos.(Every class in this library imaginable (except private ones))`
