@@ -1,131 +1,131 @@
 # TerraWearOS Library
 
-A library built with Kotlin 1.5.31 to connect WearOS Devices to Terra Enabling Developers LTD.
+This library should be used in conjunction with [TerraRTAndroid](https://github.com/tryterra/TerraRTAndroid).
+It uses Bluetooth Connection to stream data to your android device and then from there streams to Terra through websockets!
 
-As WearOS will only provide real-time data, this package will contain components to stream data straight to our servers and into your webhooks!
+**It is meant to be used for WearOS Apps!**
+## Installation
 
-## Import the library
+Download the `.aar` file from this repository and include it within the `app/libs` folder in your project structure. You may now add it as a dependency in your gradle configuration files. In your project level gradle file (`build.gradle(:Project)`), edit the `repositories` to include:
 
-You will first need to import the library into your project. Typically this is located under `.app/libs`. Upon doing so, you can then call it as a dependency on your `build.gradle` file.
-
-## Permissions 
-
-The package will require you to request 3 different permissions from the user namely:
-
-`android.permission.BODY_SENSORS` \
-`android.permission.ACCESS_FINE_LOCATION` \
-`android.permission.ACTIVITY_RECOGNITION` 
-
-## Connect to Terra
-
-A coroutine function is provided to help you connect to Terra easily through an Internet connection.
-
-```kotlin
-val connectTerra: ConnectTerra = ConnectTerra("YOUR_X_API_KEY", "YOUR_DEV_ID")
-connectTerra.connectTerra()
+```gradle
+flatDir{
+  dirs 'libs'
+}
 ```
 
-Upon successful connection, this will update the class property `ConnectTerra.userId` to have a Terra User ID associated to the user connecting to our servers.
-
-Please ensure this connection is successful before continuing in your app.
-
-## Daily Data
-
-There is a polling system within the library to poll Daily Data, namely the fields: `Daily Calories`, `Daily Steps`, and `Daily Distance`, and `Daily Floors`.
-
-You may instantiate this polling system as follows:
-
-```kotlin
-private val scheduler = DataPostScheduler("INTERVAL_IN_MILLI_SECONDS", "INITIAL_DELAY_IN_MILLI_SECONDS, "YOUR_X_API_KEY", "YOUR_DEV_ID", "TERRA_USER_ID")
+For example:
+```gradle
+repositories {
+    google()
+    mavenCentral()
+    flatDir {
+        dirs 'libs'
+    }
+}
 ```
 
-You can then start the scheduler by running: 
+Then you must include the library and the coroutines library in your app level gradle file(`build.gradle(:app)`) by adding the following lines under `dependencies`:
 
-```kotlin
-scheduler.start()
+```gradle
+implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.5.2'
+implementation files('libs/TerraWearOS-alpha.aar')
+
 ```
 
-You may also stop it by running:
-
-```kotlin
-scheduler.stop()
+For example:
+```gradle
+dependencies {
+    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation 'androidx.appcompat:appcompat:1.4.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.5.2'
+    implementation files('libs/TerraWearOS-alpha.aar')
+}
 ```
 
-## Exercise Data
+You may now import classes from the library as: `import co.tryterra.terrawearos.(Every class in this library imaginable (except private ones))`
 
-Exercise Data and the lifecycle of an Exercise on WearOS can be monitor and manipulated by the package's `HealthServicesManager` class. You may instantiate this class after the user is connected. For convenience, you may also use `Inject` for initialization as:
+## Usage
 
-```kotlin
-@Inject lateinit var healthServicesManager: HealthServicesManager
-```
-
-### Exercise Life Cycle
-
-- Preparing Exercise: The exercise must be prepared (to warm up sensors). This can be controlled by:
-```kotlin
-healthServicesManager.prepareExercise("EXERCISE_TYPE")
-```
-- Starting Exercise: To start the exercise:
-```kotlin
-healthServicesManager.startExercise("EXERCISE_TYPE")
-```
-- Pausing Exercise: To pause the exercise:
-```kotlin
-healthServicesManager.pauseExercise()
-```
-- Resuming Exercise: To resume the exercise:
-```kotlin
-healthServicesManager.resumeExercise()
-```
-- End Exercise: To stop the exercise:
-```kotlin
-healthServicesManager.endExercise()
-```
-
-### Extra utility functions (Suspended Functions)
+You will need to instantiate the `Terra` class as follows:
 
 ```kotlin
-checkExerciseTypeCapabilities("EXERCISE_TYPE")
+terra = Terra(context: Context, streamDataSet: Set<StreamDataTypes>
 ```
-Returns a [`ExerciseTypeCapabilities?`](https://developer.android.com/reference/androidx/health/services/client/data/ExerciseTypeCapabilities) Class containing all the capabilities of the `Exercise Type` given.
+
+Upon initiating this class, you will be prompted with permissions for `Body Sensor`, `Location`, and `Activity Recognition`!
+
+**Arguments**
+- `context: Context` => The app context you are calling this class from
+- `streamDataSet: Set<StreamDataTypes>` => The set of datatypes you wish to stream data for. Takes a set of `StreamDataTypes` enum.
+
+### Initialise Bluetooth Connection
+
+To put your device in discovery mode, run 
+```kotlin
+terra.startBluetoothDiscovery(callback: (Boolean) -> Unit)
+```
+
+You may now search for this device with the TerraRTAndroid package to initialise the connection!
+
+The callback will be called when the connection is completed with either `true` (successful) or `false` (unsuccessful).
+
+### Stream Data
+
+You may now streaming data to your device!
 
 ```kotlin
-allAvailableCapabilities()
+terra.startStream()
 ```
-Returns a Set of [`DataType`](https://developer.android.com/reference/androidx/health/services/client/data/DataType?hl=en) containing all the capabilities of the device.
+
+You can also stop streaming by 
+```kotlin
+terra.stopStream()
+```
+
+### [WIP] Exercises (Available for testing)
+
+You may also perform exercises on the device, and have the data streamed to your phone. 
+
+You will first have to prepare the exercise by:
 
 ```kotlin
-hasCapability("DATATYPE")
+terra.prepareExercise(type: ExerciseTypes, dataTypes: Set<DataTypes>, shouldEnableGPS: Boolean, callback: (Boolean) -> Unit)
 ```
-Return true if the device has the capability to measure a `DataType`. False otherwise.
+
+**This is only warm up sensors!!**
+**Arguments**
+- `type: ExerciseTypes` => The type of exercise you wish to prepare for. Takes an `ExerciseTypes` enum.
+- `dataTypes: Set<DataTypes>` => The datatypes from this exercise you wish to retrieve. Takes a set of `DataTypes` enum
+- (Optional) `shouldEnableGPS: Boolean` => Default to false. Will determine if the location sensor needs to be warmed up or not ;)
+- (Optional) `callback` => A callback function indicating when and if the preparation of the exercise is completed and successful **(RECOMMENDED)**
+
+After preparation, you may then start an exercise:
 
 ```kotlin
-isExerciseInProgress()
+terra!!.startExercise(
+  type: ExerciseTypes,
+  dataTypes: Set<DataTypes>,
+  shouldEnableGPS: Boolean,
+  shouldEnableAutoPauseAndResume: Boolean,
+)
 ```
-Returns true if there is already ane exercise happening. False otherwise.
+
+**Arguments**
+- `type: ExerciseTypes` => The type of exercise you wish to prepare for. Takes an `ExerciseTypes` enum.
+- `dataTypes: Set<DataTypes>` => The datatypes from this exercise you wish to retrieve. Takes a set of `DataTypes` enum
+- (Optional) `shouldEnableGPS: Boolean` => Default to false. Allow for location data streaming
+- (Optional) `shouldEnableAutoPauseAndResume: Boolean` => Defaults to false. Allow for the watch to automatic pause and resume exercise.
+
+Doing so will automatically start streaming data to your device!
+
+There is also the capability to pause, resume, and stop the exercise:
 
 ```kotlin
-isTrackingExerciseInAnotherApp()
+terra.stopExercise()
+terra.resumeExercise()
+terra.pauseExercise()
 ```
-Returns true if there are exercises happening on another app. False otherwise.
-
-
-```kotlin
-registerForAllData(Set<"DATATYPES">)
-```
-Registers for background (passive) data for the given set of `Datatypes`
-
-```kotlin
-unregisterAllData()
-```
-Unregisters for all the pasive data registered.
-
-```kotlin
-markLap()
-```
-Marks lap on the exercise client from Health Services.
-
-
 ### Demo
 
 A demo [application](https://github.com/tryterra/TerraWearOSDemo) is written to use this library.
