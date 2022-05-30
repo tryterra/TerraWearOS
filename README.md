@@ -88,7 +88,8 @@ You will first have to prepare the exercise by:
 terra.prepareExercise(type: ExerciseTypes, dataTypes: Set<DataTypes>, shouldEnableGPS: Boolean, callback: (Boolean) -> Unit)
 ```
 
-**This is only warm up sensors!!**
+**This is only for warming up sensors!!**
+
 **Arguments**
 - `type: ExerciseTypes` => The type of exercise you wish to prepare for. Takes an `ExerciseTypes` enum.
 - `dataTypes: Set<DataTypes>` => The datatypes from this exercise you wish to retrieve. Takes a set of `DataTypes` enum
