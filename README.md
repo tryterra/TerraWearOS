@@ -25,7 +25,7 @@ repositories {
 }
 ```
 
-Then you must include the library and the coroutines library in your app level gradle file(`build.gradle(:app)`) by adding the following lines under `dependencies`:
+Then you must include the library and its dependent library in your app level gradle file(`build.gradle(:app)`) by adding the following lines under `dependencies`:
 
 ```gradle
 implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.5.2'
