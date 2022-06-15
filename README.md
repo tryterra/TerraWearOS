@@ -6,39 +6,9 @@ It uses Bluetooth Connection to stream data to your android device and then from
 **It is meant to be used for WearOS Apps!**
 ## Installation
 
-Download the `.aar` file from this repository and include it within the `app/libs` folder in your project structure. You may now add it as a dependency in your gradle configuration files. In your project level gradle file (`build.gradle(:Project)`), edit the `repositories` to include:
+The library is on mavenCentral!
 
-```gradle
-flatDir{
-  dirs 'libs'
-}
-```
-
-For example:
-```gradle
-repositories {
-    google()
-    mavenCentral()
-    flatDir {
-        dirs 'libs'
-    }
-}
-```
-
-Then you must include the library and its dependent library in your app level gradle file(`build.gradle(:app)`) by adding the following lines under `dependencies`:
-
-```gradle
-implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.5.2'
-implementation 'androidx.health:health-services-client:1.0.0-alpha03'
-implementation 'com.google.guava:guava:30.1.1-android'
-implementation 'androidx.wear:wear:1.2.0'
-implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.5.2'
-implementation 'com.google.code.gson:gson:2.8.7'
-implementation files('libs/TerraWearOS-alpha.aar')
-
-```
-
-You may now import classes from the library as: `import co.tryterra.terrawearos.(Every class in this library imaginable (except private ones))`
+You may add it as a dependency on your app gradle file as: `implementation co.tryterra:terra-wearos:0.0.1`
 
 ## Usage
 
