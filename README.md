@@ -4,6 +4,13 @@ This library should be used in conjunction with [TerraRTAndroid](https://github.
 It uses Bluetooth Connection to stream data to your android device and then from there streams to Terra through websockets!
 
 **It is meant to be used for WearOS Apps!**
+
+## Quickstart
+
+A demo app is here to get you started quickly!
+
+https://github.com/tryterra/TerraWearOSDemo
+
 ## Installation
 
 The library is on mavenCentral!
@@ -92,9 +99,6 @@ terra.stopExercise()
 terra.resumeExercise()
 terra.pauseExercise()
 ```
-### Demo
-
-A demo [application](https://github.com/tryterra/TerraWearOSDemo) is written to use this library.
 
 
 
