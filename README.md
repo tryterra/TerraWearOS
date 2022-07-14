@@ -15,7 +15,7 @@ https://github.com/tryterra/TerraWearOSDemo
 
 The library is on mavenCentral!
 
-You may add it as a dependency on your app gradle file as: `implementation co.tryterra:terra-wearos:0.0.1`
+You may add it as a dependency on your app gradle file as: `implementation co.tryterra:terra-wearos:0.0.2`
 
 ## Usage
 
@@ -55,7 +55,7 @@ You can also stop streaming by
 terra.stopStream()
 ```
 
-### [WIP] Exercises (Available for testing)
+### Exercises 
 
 You may also perform exercises on the device, and have the data streamed to your phone. 
 
@@ -100,5 +100,26 @@ terra.resumeExercise()
 terra.pauseExercise()
 ```
 
+The data will arrive in your websocket server in the following format:
+
+```json
+{
+  "op":5,
+  "d":
+    {
+      "ts": <String> (In ISOFormat Date Form)
+       "val": <Double>
+       "d" <Array<Double>>
+    },
+    "uid": <String> (user ID)
+    "seq": <Int>,
+    "t": <String> (Datatype name: Exactly the same as the name of `DataTypes` enum)
+}
+```
+
+`ts` is the timestamp of the record.
+
+For Exercises, `t` will be a concatenation of the `ExerciseTypes` ENUM and `DataTypes` ENUM.
+For example, if you are performing a `RUNNING` exercise, while streaming `HEART_RATE` and `STEPS`, two different payloads will be streamed to your websocket connection with types: `RUNNING_HEART_RATE` and `RUNNING_STEPS`
 
 
